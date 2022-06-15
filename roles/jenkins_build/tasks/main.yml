@@ -1,0 +1,97 @@
+---
+# tasks file for roles/jenkins_build
+- name: Add Jenkins repository
+  with_inventory_hostnames:
+    - jenkins_redhat
+  yum_repository:
+    name: jenkins
+    description: Jenkins Repo
+    baseurl: http://pkg.jenkins.io/redhat-stable/
+    enabled: yes
+    gpgcheck: no
+
+- name: Import Jenkins Key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+- name: Install Jenkins and Java
+  package:
+    name:
+      - java-11-openjdk
+      - jenkins
+
+- name: Just force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: Start and Enable Jenkins service
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+
+- name: Set defaults for Jenkins
+  template:
+    src: files/jenkins_default
+    dest: /var/lib/jenkins/jenkins.install.UpgradeWizard.state
+
+- name: Create init folder
+  file:
+    path: /var/lib/jenkins/init.groovy.d/
+    state: directory
+
+- name: Set username and password
+  template:
+    src: files/security.groovy
+    dest: /var/lib/jenkins/init.groovy.d/basic-security.groovy
+
+- name: Restart and Enable Jenkins service
+  service:
+    name: jenkins
+    state: restarted
+    enabled: yes
+
+- name: Get the Jenkins Plugin
+  get_url:
+    url: http://localhost:8080/jnlpJars/jenkins-cli.jar
+    dest: /root/jenkins-cli.jar
+
+- name: Set username and password for Jenkins Plugin
+  template:
+    src: files/jenkinspluginauth
+    dest: /root/jenkinsauth
+
+- name: Install Plugins
+  shell: |
+    java -jar /root/jenkins-cli.jar -s http://localhost:8080/ -auth @/root/jenkinsauth install-plugin \
+      greenballs \
+      github \
+      cloudbees-folder \
+      dashboard-view \
+      configuration-as-code \
+      build-timeout \
+      rebuild \
+      ssh-agent \
+      timestamper \
+      ws-cleanup \
+      repo \
+      ssh-slaves \
+      email-ext \
+      mailer \
+      workflow-aggregator
+
+- name: Copy Job Template
+  template:
+    src: files/job_template.xml
+    dest: /var/lib/jenkins/jobs/job_template.xml
+
+- name: Create Job Template
+  shell: |
+    java -jar /root/jenkins-cli.jar -s http://localhost:8080/ -auth @/root/jenkinsauth create-job job_template < /var/lib/jenkins/jobs/job_template.xml
+
+- name: Restart and Enable Jenkins service
+  service:
+    name: jenkins
+    state: restarted
+    enabled: yes
