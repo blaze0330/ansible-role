@@ -1,0 +1,9 @@
+---
+- name: Jenkins Build
+  hosts:
+    - jenkins_redhat
+  vars_files:
+    - secret.yml
+  become: yes
+  roles:
+    - jenkins_build
