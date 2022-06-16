@@ -95,3 +95,15 @@
     name: jenkins
     state: restarted
     enabled: yes
+
+- name: Get Initial Admin Password file
+  become: yes
+  shell: |
+    cat initialAdminPassword
+  args:
+    chdir: "/var/lib/jenkins/secrets"
+  register: adminpassword
+
+- debug:
+    msg:
+      - "Jenkins initial Admin Password: {{ adminpassword.stdout }}"
