@@ -12,7 +12,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "terraform-env-backend"
+    bucket = "terraform-env-bucket"
     key    = "backend/jenkins/ansible/main.tfstate"
     region = "us-east-1"
   }
@@ -56,7 +56,7 @@ resource "aws_security_group" "tf-sec-gr" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress = {
+  ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
@@ -94,6 +94,8 @@ resource "null_resource" "config" {
   provisioner "remote-exec" {
     inline = [
       "sudo hostnamectl set-hostname Control-Node",
+      "sudo yum update -y",
+      "sudo yum install -y git",
       "sudo yum install -y python3",
       "pip3 install --user ansible",
       "echo [servers] > inventory",
