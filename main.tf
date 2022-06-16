@@ -98,7 +98,7 @@ resource "null_resource" "config" {
       "sudo yum install -y git",
       "sudo yum install -y python3",
       "pip3 install --user ansible",
-      "echo [servers] > inventory",
+      "echo [redhat_servers] > inventory",
       # Write the IP address of the managed node to inventory
       "echo jenkins_server_1 ansible_host=${aws_instance.nodes[1].private_ip}  ansible_ssh_private_key_file=~/${var.mykeypem}  ansible_user=ec2-user >> inventory",
       "chmod 400 ${var.mykeypem}"

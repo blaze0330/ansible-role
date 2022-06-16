@@ -1,7 +1,7 @@
 ---
 - name: Jenkins Build
   hosts:
-    - jenkins_redhat
+    - redhat_servers
   vars_files:
     - secret.yml
   become: yes
