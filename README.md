@@ -50,6 +50,7 @@ Jenkins Server Provisioning with Ansible Role. Checkout the [main.yml](./roles/j
 - [🚀 Usage](#-usage)
 - [💄 Groovy Script](#-groovy-script)
 - [:memo: License](#memo-license)
+- [Author Information](#author-information)
 
 ## :rocket: Technologies
 
@@ -135,6 +136,8 @@ instance.save()
 ## :memo: License
 
 This project is under license from Apache 2.0. For more details, see the [LICENSE](LICENSE) file.
+
+## Author Information
 
 Made with :heart: by <a href="https://github.com/devenes" target="_blank">devenes</a>
 
