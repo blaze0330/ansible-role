@@ -81,6 +81,13 @@ terraform apply -auto-approve
 
 ## 🚀 Usage
 
+- Check if Ansible is installed and connected to your hosts
+
+```bash
+ansible all --list-hosts
+ansible all -m ping -o
+```
+
 - Initialize Ansible role with using Ansible Galaxy
 
 ```bash
@@ -91,6 +98,8 @@ ansible-galaxy init roles/jenkins_build
 
 ```bash
 ansible-vault encrypt secret.yml
+# You can encrypt the password with:
+# ansible-vault decrypt secret.yml
 ```
 
 - Run the project playbook with Ansible
@@ -109,6 +118,12 @@ ansible all -b -m shell -a "sudo java -jar /root/jenkins-cli.jar -s http://local
 
 ```bash
 ansible all -b -m shell -a "cat /root/job.xml"
+```
+
+- Get the Jenkins Password
+
+```bash
+ansible all -m shell -a "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
 ```
 
 ## 💄 Groovy Script
